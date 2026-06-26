@@ -34,7 +34,7 @@
           "yaw": -0.008996529583300883
         }
       ],
-      "state": "нормальное состояние",
+      "state": "normal",
       "contamination_count": 4
     },
     {
@@ -62,7 +62,7 @@
           "yaw": 0.028732400709985284
         }
       ],
-      "state": "нормальное состояние",
+      "state": "normal",
       "contamination_count": 3
     },
     {
@@ -90,7 +90,7 @@
           "yaw": -0.09188251957115745
         }
       ],
-      "state": "нормальное состояние",
+      "state": "normal",
       "contamination_count": 3
     },
     {
@@ -128,7 +128,7 @@
           "yaw": -0.36525582866850465
         }
       ],
-      "state": "срочный ремонт",
+      "state": "urgent_repair",
       "contamination_count": 5
     },
     {
@@ -151,7 +151,7 @@
           "yaw": -0.14784100853346127
         }
       ],
-      "state": "некритический перегрев",
+      "state": "non_critical_overheat",
       "contamination_count": 2
     }
   ]

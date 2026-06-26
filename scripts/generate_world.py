@@ -17,22 +17,21 @@ import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-
 COLOR_TABLE = {
     "yellow": {
-        "state": "нормальное состояние",
+        "state": "normal",
         "rgba": "1.0 0.85 0.0 1.0",
     },
     "orange": {
-        "state": "некритический перегрев",
+        "state": "non_critical_overheat",
         "rgba": "1.0 0.35 0.0 1.0",
     },
     "red": {
-        "state": "срочный ремонт",
+        "state": "urgent_repair",
         "rgba": "1.0 0.0 0.0 1.0",
     },
     "green": {
-        "state": "загрязнение",
+        "state": "contamination",
         "rgba": "0.0 1.0 0.0 1.0",
     },
 }
@@ -85,7 +84,9 @@ def is_valid_position(
     return all(distance(candidate, pos) >= min_center_distance for pos in positions)
 
 
-def generate_positions(args: argparse.Namespace, rng: random.Random) -> list[tuple[float, float]]:
+def generate_positions(
+    args: argparse.Namespace, rng: random.Random
+) -> list[tuple[float, float]]:
     # Use the panel bounding square diagonal as a conservative footprint. This
     # keeps the required edge gap even when panels are compared diagonally.
     min_center_distance = args.min_edge_gap + args.panel_size * math.sqrt(2.0)
@@ -119,7 +120,9 @@ def generate_positions(args: argparse.Namespace, rng: random.Random) -> list[tup
             if len(candidates) == args.panels:
                 return candidates
 
-        positions = [(x + args.x_offset, y + args.y_offset) for x, y in anchors[: args.panels]]
+        positions = [
+            (x + args.x_offset, y + args.y_offset) for x, y in anchors[: args.panels]
+        ]
         for index, selected in enumerate(positions):
             if not is_valid_position(selected, positions[:index], min_center_distance):
                 raise RuntimeError(
@@ -149,18 +152,28 @@ def make_panels(args: argparse.Namespace, rng: random.Random) -> list[Panel]:
     colors = ["yellow", "orange", "red"]
 
     for index, (x, y) in enumerate(positions, start=1):
-        yaw = rng.choice([0.0, math.pi / 2.0, math.pi, -math.pi / 2.0]) if args.random_yaw else 0.0
+        yaw = (
+            rng.choice([0.0, math.pi / 2.0, math.pi, -math.pi / 2.0])
+            if args.random_yaw
+            else 0.0
+        )
         indicator_color = rng.choice(colors)
 
         indicator_side = -1.0 if x > args.x_offset + args.map_span / 2.0 else 1.0
-        indicator_dx, indicator_dy = rotate(indicator_side * args.indicator_offset, 0.0, yaw)
+        indicator_dx, indicator_dy = rotate(
+            indicator_side * args.indicator_offset, 0.0, yaw
+        )
         indicator_x = x + indicator_dx
         indicator_y = y + indicator_dy
 
         contaminations = []
         for _ in range(rng.randint(args.min_contaminations, args.max_contaminations)):
-            local_x = rng.uniform(-args.contamination_area / 2.0, args.contamination_area / 2.0)
-            local_y = rng.uniform(-args.contamination_area / 2.0, args.contamination_area / 2.0)
+            local_x = rng.uniform(
+                -args.contamination_area / 2.0, args.contamination_area / 2.0
+            )
+            local_y = rng.uniform(
+                -args.contamination_area / 2.0, args.contamination_area / 2.0
+            )
             world_dx, world_dy = rotate(local_x, local_y, yaw)
             contaminations.append(
                 Contamination(
@@ -250,7 +263,9 @@ def render_task_models(panels: list[Panel], args: argparse.Namespace) -> str:
             )
         )
 
-        for contamination_index, contamination in enumerate(panel.contaminations, start=1):
+        for contamination_index, contamination in enumerate(
+            panel.contaminations, start=1
+        ):
             chunks.append(
                 box_model(
                     name=f"solar_panel_{panel.index}_contamination_{contamination_index}",
@@ -294,7 +309,9 @@ def inject_into_base_world(base_world: Path, task_models: str) -> str:
     return content.replace(marker, f"{task_models}\n  {marker}", 1)
 
 
-def write_truth(path: Path, panels: list[Panel], args: argparse.Namespace, seed: int) -> None:
+def write_truth(
+    path: Path, panels: list[Panel], args: argparse.Namespace, seed: int
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "seed": seed,
@@ -310,20 +327,37 @@ def write_truth(path: Path, panels: list[Panel], args: argparse.Namespace, seed:
         data["contamination_count"] = len(panel.contaminations)
         payload["panels"].append(data)
 
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
 
 def parse_args() -> argparse.Namespace:
     project_root = Path(__file__).resolve().parents[1]
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base-world", type=Path, help="Existing Clover/ArUco world to inject objects into.")
-    parser.add_argument("--output", type=Path, default=project_root / "worlds" / "generated_solar.world")
-    parser.add_argument("--truth-output", type=Path, default=project_root / "worlds" / "generated_truth.json")
+    parser.add_argument(
+        "--base-world",
+        type=Path,
+        help="Existing Clover/ArUco world to inject objects into.",
+    )
+    parser.add_argument(
+        "--output", type=Path, default=project_root / "worlds" / "generated_solar.world"
+    )
+    parser.add_argument(
+        "--truth-output",
+        type=Path,
+        default=project_root / "worlds" / "generated_truth.json",
+    )
     parser.add_argument("--seed", type=int, default=None)
 
     parser.add_argument("--panels", type=int, default=5)
-    parser.add_argument("--map-span", type=float, default=6.0, help="ArUco map span in meters, usually 6 for 7 markers at 1m spacing.")
+    parser.add_argument(
+        "--map-span",
+        type=float,
+        default=6.0,
+        help="ArUco map span in meters, usually 6 for 7 markers at 1m spacing.",
+    )
     parser.add_argument("--x-offset", type=float, default=0.0)
     parser.add_argument("--y-offset", type=float, default=0.0)
     parser.add_argument("--panel-size", type=float, default=1.0)
@@ -374,8 +408,8 @@ def main() -> None:
     for panel in panels:
         state = COLOR_TABLE[panel.indicator_color]["state"]
         print(
-            f"Солнечная панель №{panel.index}: "
-            f"{panel.x:.2f} {panel.y:.2f}, {state}, {len(panel.contaminations)}"
+            f"Solar panel #{panel.index}: "
+            f"{panel.x:.2f} {panel.y:.2f}, {state}, {len(panel.contaminations)} contaminations"
         )
 
 
