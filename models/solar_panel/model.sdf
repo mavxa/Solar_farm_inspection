@@ -7,6 +7,7 @@
     <link name="link">
 
       <visual name="visual">
+        <pose>0 0 0 1.57079632679 0 0</pose>
         <geometry>
           <mesh>
             <uri>model://solar_panel/meshes/solar_panel.obj</uri>
