@@ -97,26 +97,28 @@ def generate_positions(args: argparse.Namespace, rng: random.Random) -> list[tup
 
     positions: list[tuple[float, float]] = []
     if args.panels <= len(anchors):
-        for anchor_x, anchor_y in anchors[: args.panels]:
-            selected = None
-            for _ in range(200):
+        for _ in range(500):
+            candidates: list[tuple[float, float]] = []
+            for anchor_x, anchor_y in anchors[: args.panels]:
                 jitter_x = rng.uniform(-args.position_jitter, args.position_jitter)
                 jitter_y = rng.uniform(-args.position_jitter, args.position_jitter)
                 candidate = (
                     min(max(anchor_x + jitter_x, low), high) + args.x_offset,
                     min(max(anchor_y + jitter_y, low), high) + args.y_offset,
                 )
-                if is_valid_position(candidate, positions, min_center_distance):
-                    selected = candidate
+                if not is_valid_position(candidate, candidates, min_center_distance):
                     break
-            if selected is None:
-                selected = (anchor_x + args.x_offset, anchor_y + args.y_offset)
-            if not is_valid_position(selected, positions, min_center_distance):
+                candidates.append(candidate)
+            if len(candidates) == args.panels:
+                return candidates
+
+        positions = [(x + args.x_offset, y + args.y_offset) for x, y in anchors[: args.panels]]
+        for index, selected in enumerate(positions):
+            if not is_valid_position(selected, positions[:index], min_center_distance):
                 raise RuntimeError(
                     "Cannot place panels with current panel size/min gap/map span settings. "
                     "Try reducing --position-jitter or --min-edge-gap, or increasing --map-span."
                 )
-            positions.append(selected)
         return positions
 
     for _ in range(20_000):
