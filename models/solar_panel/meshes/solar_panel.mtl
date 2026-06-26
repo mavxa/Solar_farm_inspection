@@ -1,0 +1,26 @@
+# Gazebo MTL file for solar_panel
+# Texture path is relative to meshes/ folder
+
+newmtl Environment.1
+Ns 96.078415
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd ../materials/textures/texture.png
+map_d ../materials/textures/texture.png
+
+newmtl Environment.2
+Ns 96.078415
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd ../materials/textures/texture.png
+map_d ../materials/textures/texture.png

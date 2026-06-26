@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="solar_panel">
+
+    <static>true</static>
+
+    <link name="link">
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://solar_panel/meshes/solar_panel.obj</uri>
+            <scale>0.5 0.5 0.5</scale>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+
+    </link>
+
+  </model>
+</sdf>
