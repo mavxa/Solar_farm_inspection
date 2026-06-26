@@ -374,8 +374,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-contaminations", type=int, default=2)
     parser.add_argument("--max-contaminations", type=int, default=5)
     parser.add_argument("--contamination-area", type=float, default=0.55)
-    parser.add_argument("--contamination-length", type=float, default=0.28)
-    parser.add_argument("--contamination-width", type=float, default=0.11)
+    parser.add_argument("--contamination-length", type=float, default=0.22)
+    parser.add_argument("--contamination-width", type=float, default=0.08)
     parser.add_argument("--contamination-height", type=float, default=0.025)
     parser.add_argument("--contamination-z", type=float, default=0.62)
 
