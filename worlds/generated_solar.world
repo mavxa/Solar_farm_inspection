@@ -13,12 +13,12 @@
     <include>
       <name>solar_panel_1</name>
       <uri>model://solar_panel</uri>
-      <pose>0.586 0.551 0.000 0 0 0.000</pose>
+      <pose>0.550 0.550 0.000 0 0 0.000</pose>
     </include>
 
-    <model name="solar_panel_1_indicator_red">
+    <model name="solar_panel_1_indicator_yellow">
       <static>true</static>
-      <pose>1.366 0.551 0.011 0 0 0.000</pose>
+      <pose>1.330 0.550 0.011 0 0 0.000</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -27,8 +27,8 @@
             </box>
           </geometry>
           <material>
-            <ambient>1.0 0.0 0.0 1.0</ambient>
-            <diffuse>1.0 0.0 0.0 1.0</diffuse>
+            <ambient>1.0 0.85 0.0 1.0</ambient>
+            <diffuse>1.0 0.85 0.0 1.0</diffuse>
           </material>
         </visual>
       <collision name="collision">
@@ -43,7 +43,7 @@
 
     <model name="solar_panel_1_contamination_1">
       <static>true</static>
-      <pose>0.631 0.281 0.620 0 0 0.567</pose>
+      <pose>0.399 0.385 0.620 0 0 -0.761</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -68,7 +68,7 @@
 
     <model name="solar_panel_1_contamination_2">
       <static>true</static>
-      <pose>0.357 0.342 0.620 0 0 -0.519</pose>
+      <pose>0.410 0.536 0.620 0 0 0.560</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -93,7 +93,7 @@
 
     <model name="solar_panel_1_contamination_3">
       <static>true</static>
-      <pose>0.770 0.606 0.620 0 0 -0.547</pose>
+      <pose>0.315 0.503 0.620 0 0 0.208</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -118,32 +118,7 @@
 
     <model name="solar_panel_1_contamination_4">
       <static>true</static>
-      <pose>0.513 0.440 0.620 0 0 -0.075</pose>
-      <link name="link">
-        <visual name="visual">
-          <geometry>
-            <box>
-              <size>0.28 0.11 0.025</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>0.0 1.0 0.0 1.0</ambient>
-            <diffuse>0.0 1.0 0.0 1.0</diffuse>
-          </material>
-        </visual>
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>0.28 0.11 0.025</size>
-          </box>
-        </geometry>
-      </collision>
-      </link>
-    </model>
-
-    <model name="solar_panel_1_contamination_5">
-      <static>true</static>
-      <pose>0.315 0.522 0.620 0 0 -0.448</pose>
+      <pose>0.382 0.658 0.620 0 0 -0.009</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -169,12 +144,12 @@
     <include>
       <name>solar_panel_2</name>
       <uri>model://solar_panel</uri>
-      <pose>0.550 5.430 0.000 0 0 0.000</pose>
+      <pose>0.550 5.450 0.000 0 0 0.000</pose>
     </include>
 
     <model name="solar_panel_2_indicator_yellow">
       <static>true</static>
-      <pose>1.330 5.430 0.011 0 0 0.000</pose>
+      <pose>1.330 5.450 0.011 0 0 0.000</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -199,7 +174,7 @@
 
     <model name="solar_panel_2_contamination_1">
       <static>true</static>
-      <pose>0.786 5.320 0.620 0 0 -0.345</pose>
+      <pose>0.636 5.178 0.620 0 0 0.402</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -224,7 +199,7 @@
 
     <model name="solar_panel_2_contamination_2">
       <static>true</static>
-      <pose>0.596 5.217 0.620 0 0 -0.462</pose>
+      <pose>0.699 5.234 0.620 0 0 -0.120</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -249,57 +224,7 @@
 
     <model name="solar_panel_2_contamination_3">
       <static>true</static>
-      <pose>0.452 5.290 0.620 0 0 -0.111</pose>
-      <link name="link">
-        <visual name="visual">
-          <geometry>
-            <box>
-              <size>0.28 0.11 0.025</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>0.0 1.0 0.0 1.0</ambient>
-            <diffuse>0.0 1.0 0.0 1.0</diffuse>
-          </material>
-        </visual>
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>0.28 0.11 0.025</size>
-          </box>
-        </geometry>
-      </collision>
-      </link>
-    </model>
-
-    <model name="solar_panel_2_contamination_4">
-      <static>true</static>
-      <pose>0.689 5.521 0.620 0 0 -0.685</pose>
-      <link name="link">
-        <visual name="visual">
-          <geometry>
-            <box>
-              <size>0.28 0.11 0.025</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>0.0 1.0 0.0 1.0</ambient>
-            <diffuse>0.0 1.0 0.0 1.0</diffuse>
-          </material>
-        </visual>
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>0.28 0.11 0.025</size>
-          </box>
-        </geometry>
-      </collision>
-      </link>
-    </model>
-
-    <model name="solar_panel_2_contamination_5">
-      <static>true</static>
-      <pose>0.555 5.676 0.620 0 0 -0.251</pose>
+      <pose>0.372 5.702 0.620 0 0 0.029</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -325,12 +250,12 @@
     <include>
       <name>solar_panel_3</name>
       <uri>model://solar_panel</uri>
-      <pose>5.414 0.550 0.000 0 0 0.000</pose>
+      <pose>5.450 0.550 0.000 0 0 0.000</pose>
     </include>
 
     <model name="solar_panel_3_indicator_yellow">
       <static>true</static>
-      <pose>4.634 0.550 0.011 0 0 0.000</pose>
+      <pose>4.670 0.550 0.011 0 0 0.000</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -355,7 +280,7 @@
 
     <model name="solar_panel_3_contamination_1">
       <static>true</static>
-      <pose>5.216 0.758 0.620 0 0 0.154</pose>
+      <pose>5.680 0.342 0.620 0 0 -0.587</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -380,7 +305,7 @@
 
     <model name="solar_panel_3_contamination_2">
       <static>true</static>
-      <pose>5.275 0.454 0.620 0 0 0.714</pose>
+      <pose>5.431 0.567 0.620 0 0 0.094</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -405,7 +330,7 @@
 
     <model name="solar_panel_3_contamination_3">
       <static>true</static>
-      <pose>5.518 0.330 0.620 0 0 0.075</pose>
+      <pose>5.350 0.690 0.620 0 0 -0.092</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -431,12 +356,12 @@
     <include>
       <name>solar_panel_4</name>
       <uri>model://solar_panel</uri>
-      <pose>5.450 5.450 0.000 0 0 0.000</pose>
+      <pose>5.384 5.450 0.000 0 0 0.000</pose>
     </include>
 
-    <model name="solar_panel_4_indicator_yellow">
+    <model name="solar_panel_4_indicator_red">
       <static>true</static>
-      <pose>4.670 5.450 0.011 0 0 0.000</pose>
+      <pose>4.604 5.450 0.011 0 0 0.000</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -445,8 +370,8 @@
             </box>
           </geometry>
           <material>
-            <ambient>1.0 0.85 0.0 1.0</ambient>
-            <diffuse>1.0 0.85 0.0 1.0</diffuse>
+            <ambient>1.0 0.0 0.0 1.0</ambient>
+            <diffuse>1.0 0.0 0.0 1.0</diffuse>
           </material>
         </visual>
       <collision name="collision">
@@ -461,7 +386,7 @@
 
     <model name="solar_panel_4_contamination_1">
       <static>true</static>
-      <pose>5.424 5.244 0.620 0 0 0.059</pose>
+      <pose>5.565 5.476 0.620 0 0 0.636</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -486,7 +411,7 @@
 
     <model name="solar_panel_4_contamination_2">
       <static>true</static>
-      <pose>5.202 5.682 0.620 0 0 0.145</pose>
+      <pose>5.518 5.436 0.620 0 0 -0.385</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -511,7 +436,7 @@
 
     <model name="solar_panel_4_contamination_3">
       <static>true</static>
-      <pose>5.671 5.544 0.620 0 0 0.589</pose>
+      <pose>5.245 5.526 0.620 0 0 0.425</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -536,7 +461,32 @@
 
     <model name="solar_panel_4_contamination_4">
       <static>true</static>
-      <pose>5.600 5.706 0.620 0 0 0.063</pose>
+      <pose>5.395 5.520 0.620 0 0 -0.361</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.28 0.11 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.28 0.11 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_4_contamination_5">
+      <static>true</static>
+      <pose>5.151 5.332 0.620 0 0 -0.365</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -562,12 +512,12 @@
     <include>
       <name>solar_panel_5</name>
       <uri>model://solar_panel</uri>
-      <pose>3.021 3.023 0.000 0 0 0.000</pose>
+      <pose>3.021 2.974 0.000 0 0 0.000</pose>
     </include>
 
-    <model name="solar_panel_5_indicator_red">
+    <model name="solar_panel_5_indicator_orange">
       <static>true</static>
-      <pose>2.241 3.023 0.011 0 0 0.000</pose>
+      <pose>2.241 2.974 0.011 0 0 0.000</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -576,8 +526,8 @@
             </box>
           </geometry>
           <material>
-            <ambient>1.0 0.0 0.0 1.0</ambient>
-            <diffuse>1.0 0.0 0.0 1.0</diffuse>
+            <ambient>1.0 0.35 0.0 1.0</ambient>
+            <diffuse>1.0 0.35 0.0 1.0</diffuse>
           </material>
         </visual>
       <collision name="collision">
@@ -592,7 +542,7 @@
 
     <model name="solar_panel_5_contamination_1">
       <static>true</static>
-      <pose>2.759 2.969 0.620 0 0 -0.633</pose>
+      <pose>2.822 2.826 0.620 0 0 0.310</pose>
       <link name="link">
         <visual name="visual">
           <geometry>
@@ -617,7 +567,7 @@
 
     <model name="solar_panel_5_contamination_2">
       <static>true</static>
-      <pose>2.945 2.890 0.620 0 0 0.499</pose>
+      <pose>3.135 2.734 0.620 0 0 -0.148</pose>
       <link name="link">
         <visual name="visual">
           <geometry>

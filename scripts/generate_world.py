@@ -12,6 +12,7 @@ import argparse
 import json
 import math
 import random
+import sys
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -58,6 +59,12 @@ class Panel:
 
 def fmt(value: float) -> str:
     return f"{value:.3f}"
+
+
+def configure_output_encoding() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
 
 
 def rotate(dx: float, dy: float, yaw: float) -> tuple[float, float]:
@@ -342,6 +349,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    configure_output_encoding()
     args = parse_args()
     if args.min_contaminations > args.max_contaminations:
         raise SystemExit("--min-contaminations must be <= --max-contaminations")
