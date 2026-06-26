@@ -176,7 +176,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=project_root / "dataset" / "raw")
     parser.add_argument("--truth", type=Path, default=project_root / "worlds" / "generated_truth.json")
     parser.add_argument("--mode", choices=("panels", "grid"), default="panels")
-    parser.add_argument("--frame-id", default="aruco_map")
+    parser.add_argument("--frame-id", default="map")
     parser.add_argument("--altitude", type=float, default=1.4)
     parser.add_argument("--speed", type=float, default=0.5)
     parser.add_argument("--takeoff-altitude", type=float, default=1.0)
