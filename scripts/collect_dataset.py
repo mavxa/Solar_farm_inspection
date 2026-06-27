@@ -72,13 +72,15 @@ class FrameCollector:
             frame = self.latest_frame.copy()
             stamp = self.latest_stamp.to_nsec() if self.latest_stamp else rospy.Time.now().to_nsec()
 
-        self.saved_count += 1
         safe_label = re.sub(r"[^a-zA-Z0-9_.-]+", "_", label).strip("_") or "frame"
-        filename = f"{self.saved_count:06d}_{safe_label}_{stamp}.jpg"
+        next_count = self.saved_count + 1
+        filename = f"{next_count:06d}_{safe_label}_{stamp}.jpg"
         path = self.output_dir / filename
         ok = cv2.imwrite(str(path), frame, [int(cv2.IMWRITE_JPEG_QUALITY), self.jpeg_quality])
         if not ok:
-            raise RuntimeError(f"Failed to write image: {path}")
+            rospy.logwarn("Failed to write image: %s", path)
+            return None
+        self.saved_count = next_count
         return path
 
 
@@ -122,20 +124,28 @@ def land_wait(land, get_telemetry) -> None:
         rate.sleep()
 
 
-def load_panel_waypoints(truth_path: Path, altitude: float, include_offsets: bool) -> list[tuple[str, float, float, float]]:
+def clamp(value: float, low: float, high: float) -> float:
+    return min(max(value, low), high)
+
+
+def load_panel_waypoints(args: argparse.Namespace) -> list[tuple[str, float, float, float]]:
+    truth_path = args.truth
     data = json.loads(truth_path.read_text(encoding="utf-8"))
     waypoints: list[tuple[str, float, float, float]] = []
 
     offsets = [(0.0, 0.0)]
-    if include_offsets:
-        offsets.extend([(0.35, 0.0), (-0.35, 0.0), (0.0, 0.35), (0.0, -0.35)])
+    if args.include_offset_views:
+        offset = args.view_offset
+        offsets.extend([(offset, 0.0), (-offset, 0.0), (0.0, offset), (0.0, -offset)])
 
     for panel in data.get("panels", []):
         index = int(panel["index"])
         x = float(panel["x"])
         y = float(panel["y"])
         for offset_index, (dx, dy) in enumerate(offsets):
-            waypoints.append((f"panel_{index}_view_{offset_index}", x + dx, y + dy, altitude))
+            target_x = clamp(x + dx, args.safe_min_x, args.safe_max_x)
+            target_y = clamp(y + dy, args.safe_min_y, args.safe_max_y)
+            waypoints.append((f"panel_{index}_view_{offset_index}", target_x, target_y, args.altitude))
 
     if not waypoints:
         raise RuntimeError(f"No panels found in truth file: {truth_path}")
@@ -154,6 +164,12 @@ def make_grid_waypoints(args: argparse.Namespace) -> list[tuple[str, float, floa
             y += args.grid_step
         x += args.grid_step
     return waypoints
+
+
+def log_waypoints(waypoints: list[tuple[str, float, float, float]], frame_id: str) -> None:
+    print(f"Planned waypoints in frame '{frame_id}':")
+    for index, (label, x, y, z) in enumerate(waypoints, start=1):
+        print(f"  {index:02d}. {label}: x={x:.2f}, y={y:.2f}, z={z:.2f}")
 
 
 def capture_during_dwell(collector: FrameCollector, label: str, dwell: float, interval: float) -> None:
@@ -178,14 +194,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mode", choices=("panels", "grid"), default="panels")
     parser.add_argument("--frame-id", default="map")
     parser.add_argument("--altitude", type=float, default=1.4)
-    parser.add_argument("--speed", type=float, default=0.5)
+    parser.add_argument("--speed", type=float, default=0.35)
     parser.add_argument("--takeoff-altitude", type=float, default=1.0)
     parser.add_argument("--dwell", type=float, default=3.0)
     parser.add_argument("--capture-interval", type=float, default=0.5)
     parser.add_argument("--jpeg-quality", type=int, default=95)
     parser.add_argument("--include-offset-views", action="store_true")
+    parser.add_argument("--view-offset", type=float, default=0.2)
+    parser.add_argument("--safe-min-x", type=float, default=0.45)
+    parser.add_argument("--safe-max-x", type=float, default=5.55)
+    parser.add_argument("--safe-min-y", type=float, default=0.45)
+    parser.add_argument("--safe-max-y", type=float, default=5.55)
     parser.add_argument("--skip-flight", action="store_true", help="Only save frames from the current camera topic.")
     parser.add_argument("--skip-land", action="store_true")
+    parser.add_argument("--max-waypoints", type=int, default=0, help="Limit visited waypoints; 0 means no limit.")
     parser.add_argument("--grid-min-x", type=float, default=0.5)
     parser.add_argument("--grid-max-x", type=float, default=5.5)
     parser.add_argument("--grid-min-y", type=float, default=0.5)
@@ -217,9 +239,14 @@ def main() -> None:
     land = rospy.ServiceProxy("land", Trigger)
 
     if args.mode == "panels":
-        waypoints = load_panel_waypoints(args.truth, args.altitude, args.include_offset_views)
+        waypoints = load_panel_waypoints(args)
     else:
         waypoints = make_grid_waypoints(args)
+
+    if args.max_waypoints > 0:
+        waypoints = waypoints[: args.max_waypoints]
+
+    log_waypoints(waypoints, args.frame_id)
 
     rospy.loginfo("Taking off")
     navigate_wait(
@@ -236,10 +263,15 @@ def main() -> None:
             rospy.loginfo("Navigate to %s: x=%.2f y=%.2f z=%.2f frame=%s", label, x, y, z, args.frame_id)
             navigate_wait(navigate, get_telemetry, x=x, y=y, z=z, frame_id=args.frame_id, speed=args.speed)
             capture_during_dwell(collector, label, args.dwell, args.capture_interval)
+    except rospy.ROSInterruptException:
+        rospy.logwarn("Interrupted by ROS shutdown")
     finally:
-        if not args.skip_land:
+        if not args.skip_land and not rospy.is_shutdown():
             rospy.loginfo("Landing")
-            land_wait(land, get_telemetry)
+            try:
+                land_wait(land, get_telemetry)
+            except Exception as exc:
+                rospy.logwarn("Landing failed: %s", exc)
 
     rospy.loginfo("Saved %d frames to %s", collector.saved_count, args.output_dir)
 
