@@ -95,6 +95,7 @@ def navigate_wait(
     frame_id: str = "body",
     auto_arm: bool = False,
     tolerance: float = 0.2,
+    timeout: float = 30.0,
 ) -> None:
     res = navigate(
         x=x,
@@ -108,12 +109,15 @@ def navigate_wait(
     if not res.success:
         raise RuntimeError(res.message)
 
+    deadline = time.time() + timeout
     rate = rospy.Rate(5)
     while not rospy.is_shutdown():
         telem = get_telemetry(frame_id="navigate_target")
         distance = math.sqrt(telem.x**2 + telem.y**2 + telem.z**2)
         if distance < tolerance:
             return
+        if time.time() > deadline:
+            raise RuntimeError(f"Navigation timeout, distance to target is {distance:.2f} m")
         rate.sleep()
 
 
@@ -138,7 +142,11 @@ def load_panel_waypoints(args: argparse.Namespace) -> list[tuple[str, float, flo
         offset = args.view_offset
         offsets.extend([(offset, 0.0), (-offset, 0.0), (0.0, offset), (0.0, -offset)])
 
-    for panel in data.get("panels", []):
+    panels = data.get("panels", [])
+    if args.max_panels > 0:
+        panels = panels[: args.max_panels]
+
+    for panel in panels:
         index = int(panel["index"])
         x = float(panel["x"])
         y = float(panel["y"])
@@ -197,6 +205,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--speed", type=float, default=0.35)
     parser.add_argument("--takeoff-altitude", type=float, default=1.0)
     parser.add_argument("--dwell", type=float, default=3.0)
+    parser.add_argument("--settle-time", type=float, default=0.7)
     parser.add_argument("--capture-interval", type=float, default=0.5)
     parser.add_argument("--jpeg-quality", type=int, default=95)
     parser.add_argument("--include-offset-views", action="store_true")
@@ -207,6 +216,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--safe-max-y", type=float, default=5.55)
     parser.add_argument("--skip-flight", action="store_true", help="Only save frames from the current camera topic.")
     parser.add_argument("--skip-land", action="store_true")
+    parser.add_argument("--navigate-timeout", type=float, default=30.0)
+    parser.add_argument("--max-panels", type=int, default=0, help="Limit panels in panels mode; 0 means no limit.")
     parser.add_argument("--max-waypoints", type=int, default=0, help="Limit visited waypoints; 0 means no limit.")
     parser.add_argument("--grid-min-x", type=float, default=0.5)
     parser.add_argument("--grid-max-x", type=float, default=5.5)
@@ -256,12 +267,23 @@ def main() -> None:
         frame_id="body",
         speed=args.speed,
         auto_arm=True,
+        timeout=args.navigate_timeout,
     )
 
     try:
         for label, x, y, z in waypoints:
             rospy.loginfo("Navigate to %s: x=%.2f y=%.2f z=%.2f frame=%s", label, x, y, z, args.frame_id)
-            navigate_wait(navigate, get_telemetry, x=x, y=y, z=z, frame_id=args.frame_id, speed=args.speed)
+            navigate_wait(
+                navigate,
+                get_telemetry,
+                x=x,
+                y=y,
+                z=z,
+                frame_id=args.frame_id,
+                speed=args.speed,
+                timeout=args.navigate_timeout,
+            )
+            rospy.sleep(args.settle_time)
             capture_during_dwell(collector, label, args.dwell, args.capture_interval)
     except rospy.ROSInterruptException:
         rospy.logwarn("Interrupted by ROS shutdown")
