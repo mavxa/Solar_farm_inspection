@@ -2,5 +2,5 @@ __pycache__/
 *.py[cod]
 .mypy_cache/
 .pytest_cache/
-dataset/raw/
+dataset/
 reports/
