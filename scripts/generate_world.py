@@ -76,6 +76,14 @@ def distance(a: tuple[float, float], b: tuple[float, float]) -> float:
     return math.hypot(a[0] - b[0], a[1] - b[1])
 
 
+def is_far_enough(
+    candidate: tuple[float, float],
+    positions: list[tuple[float, float]],
+    min_distance: float,
+) -> bool:
+    return all(distance(candidate, position) >= min_distance for position in positions)
+
+
 def is_valid_position(
     candidate: tuple[float, float],
     positions: list[tuple[float, float]],
@@ -167,19 +175,41 @@ def make_panels(args: argparse.Namespace, rng: random.Random) -> list[Panel]:
         indicator_y = y + indicator_dy
 
         contaminations = []
+        local_contamination_positions: list[tuple[float, float]] = []
+        contamination_min_distance = (
+            max(args.contamination_length, args.contamination_width) + args.contamination_gap
+        )
         for _ in range(rng.randint(args.min_contaminations, args.max_contaminations)):
-            local_x = rng.uniform(
-                -args.contamination_area / 2.0, args.contamination_area / 2.0
-            )
-            local_y = rng.uniform(
-                -args.contamination_area / 2.0, args.contamination_area / 2.0
-            )
+            selected = None
+            candidate = (0.0, 0.0)
+            for _ in range(100):
+                local_x = rng.uniform(
+                    -args.contamination_area / 2.0, args.contamination_area / 2.0
+                )
+                local_y = rng.uniform(
+                    -args.contamination_area / 2.0, args.contamination_area / 2.0
+                )
+                candidate = (local_x, local_y)
+                if is_far_enough(
+                    candidate, local_contamination_positions, contamination_min_distance
+                ):
+                    selected = candidate
+                    break
+
+            if selected is None:
+                selected = candidate
+
+            local_contamination_positions.append(selected)
+            local_x, local_y = selected
             world_dx, world_dy = rotate(local_x, local_y, yaw)
+            contamination_yaw = yaw
+            if args.random_contamination_yaw:
+                contamination_yaw += rng.uniform(-0.8, 0.8)
             contaminations.append(
                 Contamination(
                     x=x + world_dx,
                     y=y + world_dy,
-                    yaw=yaw + rng.uniform(-0.8, 0.8),
+                    yaw=contamination_yaw,
                 )
             )
 
@@ -376,8 +406,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--contamination-area", type=float, default=0.55)
     parser.add_argument("--contamination-length", type=float, default=0.22)
     parser.add_argument("--contamination-width", type=float, default=0.08)
+    parser.add_argument("--contamination-gap", type=float, default=0.04)
     parser.add_argument("--contamination-height", type=float, default=0.025)
     parser.add_argument("--contamination-z", type=float, default=0.62)
+    parser.add_argument("--random-contamination-yaw", action="store_true")
 
     return parser.parse_args()
 

@@ -7,3 +7,4 @@ dataset/
 reports/
 runs/
 /yolov*.pt
+worlds/*
