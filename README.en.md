@@ -158,6 +158,8 @@ python3 scripts/generate_world.py \
 
 Do not pass `--seed` when demonstrating random generation. The script prints the generated seed and panel data.
 
+As a fallback, the repository already includes a ready-to-use `worlds/generated_solar.world`. If generation fails on a specific VM because of Clover paths or a missing base world file, you can skip generation and install the prepared world with `scripts/use_solar_world.sh install`.
+
 `generated_truth.json` is for debugging only. The mission script does not read it.
 
 ## Install Generated World Into Clover
