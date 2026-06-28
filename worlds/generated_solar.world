@@ -1,0 +1,620 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="solar_farm_inspection">
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- Generated solar farm inspection objects. -->
+
+    <include>
+      <name>solar_panel_1</name>
+      <uri>model://solar_panel</uri>
+      <pose>0.578 0.550 0.000 0 0 0.000</pose>
+    </include>
+
+    <model name="solar_panel_1_indicator_yellow">
+      <static>true</static>
+      <pose>1.358 0.550 0.011 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.45 0.45 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1.0 0.85 0.0 1.0</ambient>
+            <diffuse>1.0 0.85 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.45 0.45 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_1_contamination_1">
+      <static>true</static>
+      <pose>0.664 0.401 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_1_contamination_2">
+      <static>true</static>
+      <pose>0.319 0.703 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_1_contamination_3">
+      <static>true</static>
+      <pose>0.629 0.718 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_1_contamination_4">
+      <static>true</static>
+      <pose>0.328 0.364 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_1_contamination_5">
+      <static>true</static>
+      <pose>0.764 0.413 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <include>
+      <name>solar_panel_2</name>
+      <uri>model://solar_panel</uri>
+      <pose>0.550 5.450 0.000 0 0 0.000</pose>
+    </include>
+
+    <model name="solar_panel_2_indicator_orange">
+      <static>true</static>
+      <pose>1.330 5.450 0.011 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.45 0.45 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1.0 0.35 0.0 1.0</ambient>
+            <diffuse>1.0 0.35 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.45 0.45 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_2_contamination_1">
+      <static>true</static>
+      <pose>0.746 5.689 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_2_contamination_2">
+      <static>true</static>
+      <pose>0.445 5.417 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_2_contamination_3">
+      <static>true</static>
+      <pose>0.740 5.262 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_2_contamination_4">
+      <static>true</static>
+      <pose>0.412 5.683 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <include>
+      <name>solar_panel_3</name>
+      <uri>model://solar_panel</uri>
+      <pose>5.383 0.550 0.000 0 0 0.000</pose>
+    </include>
+
+    <model name="solar_panel_3_indicator_orange">
+      <static>true</static>
+      <pose>4.603 0.550 0.011 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.45 0.45 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1.0 0.35 0.0 1.0</ambient>
+            <diffuse>1.0 0.35 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.45 0.45 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_3_contamination_1">
+      <static>true</static>
+      <pose>5.194 0.643 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_3_contamination_2">
+      <static>true</static>
+      <pose>5.634 0.305 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <include>
+      <name>solar_panel_4</name>
+      <uri>model://solar_panel</uri>
+      <pose>5.450 5.450 0.000 0 0 0.000</pose>
+    </include>
+
+    <model name="solar_panel_4_indicator_orange">
+      <static>true</static>
+      <pose>4.670 5.450 0.011 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.45 0.45 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1.0 0.35 0.0 1.0</ambient>
+            <diffuse>1.0 0.35 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.45 0.45 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_4_contamination_1">
+      <static>true</static>
+      <pose>5.439 5.618 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_4_contamination_2">
+      <static>true</static>
+      <pose>5.355 5.189 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_4_contamination_3">
+      <static>true</static>
+      <pose>5.679 5.248 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_4_contamination_4">
+      <static>true</static>
+      <pose>5.705 5.704 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <include>
+      <name>solar_panel_5</name>
+      <uri>model://solar_panel</uri>
+      <pose>2.954 3.017 0.000 0 0 0.000</pose>
+    </include>
+
+    <model name="solar_panel_5_indicator_yellow">
+      <static>true</static>
+      <pose>3.734 3.017 0.011 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.45 0.45 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1.0 0.85 0.0 1.0</ambient>
+            <diffuse>1.0 0.85 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.45 0.45 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_5_contamination_1">
+      <static>true</static>
+      <pose>3.132 2.879 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_5_contamination_2">
+      <static>true</static>
+      <pose>2.688 3.126 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+
+    <model name="solar_panel_5_contamination_3">
+      <static>true</static>
+      <pose>2.695 2.798 0.620 0 0 0.000</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.22 0.08 0.025</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1.0</ambient>
+            <diffuse>0.0 1.0 0.0 1.0</diffuse>
+          </material>
+        </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.22 0.08 0.025</size>
+          </box>
+        </geometry>
+      </collision>
+      </link>
+    </model>
+    <!-- End generated solar farm inspection objects. -->
+
+  </world>
+</sdf>
