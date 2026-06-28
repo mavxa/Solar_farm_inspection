@@ -210,6 +210,8 @@ class SolarInspector:
         return detections
 
     def green_contours(self, frame: np.ndarray) -> list[np.ndarray]:
+        # RU: зелёные загрязнения дополнительно обводим классическим HSV-фильтром.
+        # EN: green dirt is also outlined with a simple HSV filter for /solar.
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         lower = np.array([35, 60, 40], dtype=np.uint8)
         upper = np.array([90, 255, 255], dtype=np.uint8)
@@ -246,6 +248,8 @@ class SolarInspector:
         return annotated
 
     def publish_annotated(self, annotated: np.ndarray) -> None:
+        # RU: это топик, который требуется в задании: /solar типа sensor_msgs/Image.
+        # EN: required task output: /solar as a sensor_msgs/Image topic.
         msg = self.bridge.cv2_to_imgmsg(annotated, encoding="bgr8")
         msg.header.stamp = rospy.Time.now()
         self.solar_pub.publish(msg)
@@ -287,6 +291,8 @@ class SolarInspector:
 
             for det in detections:
                 if det.class_name in STATE_BY_INDICATOR:
+                    # RU: если видно несколько индикаторов, выбираем тот, что ближе к центру камеры.
+                    # EN: when multiple indicators are visible, prefer the centered one.
                     indicator_scores[det.class_name] += det.confidence * center_weight(
                         det.xyxy, frame_w, frame_h
                     )
@@ -406,6 +412,8 @@ def parse_waypoints(raw: str) -> list[tuple[float, float]]:
 
 
 def center_weight(xyxy: tuple[int, int, int, int], frame_w: int, frame_h: int) -> float:
+    # RU: вес 1.0 в центре кадра и меньше к краям; защищает LED от чужих индикаторов.
+    # EN: weight is highest in the image center; avoids picking a side indicator.
     x1, y1, x2, y2 = xyxy
     box_cx = (x1 + x2) / 2.0
     box_cy = (y1 + y2) / 2.0

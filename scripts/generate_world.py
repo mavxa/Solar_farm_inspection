@@ -95,8 +95,8 @@ def is_valid_position(
 def generate_positions(
     args: argparse.Namespace, rng: random.Random
 ) -> list[tuple[float, float]]:
-    # Use the panel bounding square diagonal as a conservative footprint. This
-    # keeps the required edge gap even when panels are compared diagonally.
+    # RU: держим панели с запасом, чтобы выполнить требование 2 м между краями.
+    # EN: keep a conservative footprint to satisfy the 2 m edge gap requirement.
     min_center_distance = args.min_edge_gap + args.panel_size * math.sqrt(2.0)
     margin = args.panel_size / 2.0 + 0.05
     low = margin
@@ -180,6 +180,8 @@ def make_panels(args: argparse.Namespace, rng: random.Random) -> list[Panel]:
             max(args.contamination_length, args.contamination_width) + args.contamination_gap
         )
         for _ in range(rng.randint(args.min_contaminations, args.max_contaminations)):
+            # RU: подбираем точки на панели так, чтобы листья не лежали друг на друге.
+            # EN: sample leaf positions with spacing to avoid overlapping boxes.
             selected = None
             candidate = (0.0, 0.0)
             for _ in range(100):
@@ -336,6 +338,8 @@ def inject_into_base_world(base_world: Path, task_models: str) -> str:
     marker = "</world>"
     if marker not in content:
         raise RuntimeError(f"Base world does not contain {marker}: {base_world}")
+    # RU: не ломаем Clover world, а добавляем свои объекты перед закрытием world.
+    # EN: keep the Clover world intact and inject task objects before </world>.
     return content.replace(marker, f"{task_models}\n  {marker}", 1)
 
 

@@ -8,3 +8,5 @@ reports/
 runs/
 /yolov*.pt
 worlds/*
+
+*.mp4
