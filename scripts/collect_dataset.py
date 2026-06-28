@@ -26,6 +26,7 @@ from std_srvs.srv import Trigger
 
 
 def configure_output_encoding() -> None:
+    # Оставляем вывод совместимым с разными локалями в VM.
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8", errors="replace")
@@ -33,6 +34,7 @@ def configure_output_encoding() -> None:
 
 class FrameCollector:
     def __init__(self, image_topic: str, output_dir: Path, jpeg_quality: int) -> None:
+        # ROS callback кладёт сюда последний кадр, а основной цикл сохраняет его на диск.
         self.bridge = CvBridge()
         self.output_dir = output_dir
         self.jpeg_quality = jpeg_quality
@@ -69,10 +71,12 @@ class FrameCollector:
         with self.lock:
             if self.latest_frame is None:
                 return None
+            # Копируем кадр под lock, а JPEG пишем уже без блокировки callback.
             frame = self.latest_frame.copy()
             stamp = self.latest_stamp.to_nsec() if self.latest_stamp else rospy.Time.now().to_nsec()
 
         safe_label = re.sub(r"[^a-zA-Z0-9_.-]+", "_", label).strip("_") or "frame"
+        # В имени файла есть номер, метка точки и timestamp: удобно разбирать датасет.
         next_count = self.saved_count + 1
         filename = f"{next_count:06d}_{safe_label}_{stamp}.jpg"
         path = self.output_dir / filename
@@ -97,6 +101,7 @@ def navigate_wait(
     tolerance: float = 0.2,
     timeout: float = 30.0,
 ) -> None:
+    # Такой же принцип ожидания, как в финальной миссии: идём до navigate_target.
     res = navigate(
         x=x,
         y=y,
@@ -133,12 +138,14 @@ def clamp(value: float, low: float, high: float) -> float:
 
 
 def load_panel_waypoints(args: argparse.Namespace) -> list[tuple[str, float, float, float]]:
+    # generated_truth.json здесь допустим: это служебный скрипт для сбора датасета.
     truth_path = args.truth
     data = json.loads(truth_path.read_text(encoding="utf-8"))
     waypoints: list[tuple[str, float, float, float]] = []
 
     offsets = [(0.0, 0.0)]
     if args.include_offset_views:
+        # Смещённые ракурсы дают больше разнообразия для обучения YOLO.
         offset = args.view_offset
         offsets.extend([(offset, 0.0), (-offset, 0.0), (0.0, offset), (0.0, -offset)])
 
@@ -161,6 +168,7 @@ def load_panel_waypoints(args: argparse.Namespace) -> list[tuple[str, float, flo
 
 
 def make_grid_waypoints(args: argparse.Namespace) -> list[tuple[str, float, float, float]]:
+    # Grid-режим нужен, если truth-файла нет или хочется собрать фоновые кадры.
     waypoints = []
     index = 1
     x = args.grid_min_x
@@ -181,6 +189,7 @@ def log_waypoints(waypoints: list[tuple[str, float, float, float]], frame_id: st
 
 
 def capture_during_dwell(collector: FrameCollector, label: str, dwell: float, interval: float) -> None:
+    # Во время остановки сохраняем несколько кадров, а не один случайный снимок.
     deadline = time.time() + dwell
     next_capture = 0.0
     while not rospy.is_shutdown() and time.time() < deadline:
@@ -236,6 +245,7 @@ def main() -> None:
     collector.wait_for_frame(timeout=10.0)
 
     if args.skip_flight:
+        # Удобно проверить камеру и запись изображений без взлёта.
         rospy.loginfo("Skipping flight; collecting frames in place.")
         capture_during_dwell(collector, "static", args.dwell, args.capture_interval)
         rospy.loginfo("Saved %d frames to %s", collector.saved_count, args.output_dir)
@@ -255,6 +265,7 @@ def main() -> None:
         waypoints = make_grid_waypoints(args)
 
     if args.max_waypoints > 0:
+        # Ограничение полезно для короткого теста перед долгим сбором датасета.
         waypoints = waypoints[: args.max_waypoints]
 
     log_waypoints(waypoints, args.frame_id)
@@ -284,6 +295,7 @@ def main() -> None:
                 timeout=args.navigate_timeout,
             )
             rospy.sleep(args.settle_time)
+            # Сначала даём коптеру стабилизироваться, потом пишем серию кадров.
             capture_during_dwell(collector, label, args.dwell, args.capture_interval)
     except rospy.ROSInterruptException:
         rospy.logwarn("Interrupted by ROS shutdown")

@@ -7,6 +7,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 source "$SCRIPT_DIR/setup_gazebo_env.sh" --quiet
 
 for model_name in parquet_plane aruco_cmit_txt solar_panel; do
+  # Перед запуском Gazebo проверяем, что все model:// ссылки реально доступны.
   if [[ ! -f "$PROJECT_ROOT/models/$model_name/model.config" ]]; then
     found=0
     IFS=":" read -r -a gazebo_paths <<< "${GAZEBO_MODEL_PATH:-}"
@@ -24,4 +25,5 @@ for model_name in parquet_plane aruco_cmit_txt solar_panel; do
   fi
 done
 
+# exec заменяет shell процесс Gazebo, чтобы Ctrl+C работал предсказуемо.
 exec gazebo --verbose "$PROJECT_ROOT/worlds/generated_solar.world"

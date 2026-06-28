@@ -22,6 +22,7 @@ from sensor_msgs.msg import Image
 from std_srvs.srv import Trigger
 
 CLASS_COLORS = {
+    # Цвета рамок на /solar подобраны под цвета объектов в Gazebo.
     "contamination": (0, 255, 0),
     "indicator_orange": (0, 140, 255),
     "indicator_red": (0, 0, 255),
@@ -30,6 +31,7 @@ CLASS_COLORS = {
 }
 
 STATE_BY_INDICATOR = {
+    # Модель видит класс индикатора, а в отчёт пишется состояние панели.
     "indicator_yellow": "normal",
     "indicator_orange": "non_critical_overheat",
     "indicator_red": "urgent_repair",
@@ -69,6 +71,7 @@ def configure_output_encoding() -> None:
 
 class CameraBuffer:
     def __init__(self, topic: str) -> None:
+        # Храним только последний кадр, чтобы YOLO не обрабатывала устаревшую очередь.
         self.bridge = CvBridge()
         self.lock = Lock()
         self.frame = None
@@ -100,6 +103,7 @@ class CameraBuffer:
         with self.lock:
             if self.frame is None:
                 return None
+            # Копия защищает буфер от изменений во время отрисовки и инференса.
             return self.frame.copy()
 
 
@@ -111,6 +115,7 @@ class SolarInspector:
         self.solar_pub = rospy.Publisher(args.output_topic, Image, queue_size=1)
 
         try:
+            # YOLO импортируется после старта, чтобы ошибка окружения была понятной.
             from ultralytics import YOLO
         except ModuleNotFoundError as exc:
             raise RuntimeError(
@@ -126,6 +131,7 @@ class SolarInspector:
         self.set_effect = None
 
         try:
+            # LED не критичен для полёта: если сервиса нет, миссия всё равно продолжится.
             self.set_effect = rospy.ServiceProxy("led/set_effect", srv.SetLEDEffect)
             rospy.wait_for_service("led/set_effect", timeout=2.0)
         except Exception as exc:
@@ -141,6 +147,7 @@ class SolarInspector:
     def set_led(self, state: str) -> None:
         if self.set_effect is None:
             return
+        # Цвет LED показывает текущее состояние: движение или результат инспекции.
         r, g, b = LED_BY_STATE.get(state, LED_BY_STATE["unknown"])
         try:
             self.set_effect(effect="fill", r=r, g=g, b=b)
@@ -168,6 +175,7 @@ class SolarInspector:
         if not response.success:
             raise RuntimeError(response.message)
 
+        # Ждём не фиксированное время, а фактическое приближение к navigate_target.
         deadline = time.time() + self.args.navigate_timeout
         rate = rospy.Rate(5)
         while not rospy.is_shutdown():
@@ -184,10 +192,12 @@ class SolarInspector:
     def land_wait(self) -> None:
         self.land()
         rate = rospy.Rate(5)
+        # Не завершаем процесс, пока Clover считает коптер armed.
         while not rospy.is_shutdown() and self.get_telemetry().armed:
             rate.sleep()
 
     def detect(self, frame: np.ndarray) -> list[Detection]:
+        # Один кадр -> список bbox с классами YOLO.
         result = self.model(
             frame, imgsz=self.args.imgsz, conf=self.args.conf, verbose=False
         )[0]
@@ -228,6 +238,7 @@ class SolarInspector:
     def annotate(self, frame: np.ndarray, detections: list[Detection]) -> np.ndarray:
         annotated = frame.copy()
         contours = self.green_contours(frame)
+        # HSV-контуры помогают визуально подтвердить зелёные загрязнения на /solar.
         cv2.drawContours(annotated, contours, -1, (0, 255, 0), 2)
 
         for detection in detections:
@@ -260,6 +271,7 @@ class SolarInspector:
         deadline = time.time() + self.args.inspect_time
         next_process = 0.0
 
+        # Накапливаем несколько кадров, чтобы единичный промах YOLO не портил отчёт.
         contamination_counts = []
         indicator_scores: defaultdict[str, float] = defaultdict(float)
         panel_detected_votes = 0
@@ -313,6 +325,7 @@ class SolarInspector:
         self.set_led(state)
 
         if contamination_counts:
+            # Берём максимум: загрязнение могло быть видно не на каждом кадре.
             contamination_count = int(max(contamination_counts))
         else:
             contamination_count = 0
@@ -342,6 +355,7 @@ class SolarInspector:
         self.camera.wait_for_frame(timeout=10.0)
 
         waypoints = parse_waypoints(self.args.waypoints)
+        # Маршрут задан явно и не зависит от generated_truth.json.
         print("Mission waypoints:")
         for index, (x, y) in enumerate(waypoints, start=1):
             print(
@@ -369,6 +383,7 @@ class SolarInspector:
                 self.navigate_wait(x=x, y=y, z=self.args.altitude, frame_id=start_frame)
                 rospy.sleep(self.args.settle_time)
 
+                # После стабилизации коптера несколько секунд распознаём текущую панель.
                 result = self.inspect_current_view(index, x, y)
                 print(
                     f"Solar panel #{result.panel_index}: "
@@ -397,6 +412,7 @@ class SolarInspector:
 
 
 def parse_waypoints(raw: str) -> list[tuple[float, float]]:
+    # Формат аргумента: "x,y;x,y". Так проще менять маршрут из командной строки.
     waypoints = []
     for chunk in raw.split(";"):
         chunk = chunk.strip()
@@ -425,6 +441,7 @@ def center_weight(xyxy: tuple[int, int, int, int], frame_w: int, frame_h: int) -
 
 
 def write_report(path: Path, results: list[InspectionResult]) -> None:
+    # Отчёт пишем отдельным файлом, как требуется в задании.
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = []
     for result in results:
@@ -439,6 +456,7 @@ def write_report(path: Path, results: list[InspectionResult]) -> None:
 def parse_args() -> argparse.Namespace:
     project_root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
+    # По умолчанию используем camera topic Clover и публикуем результат в /solar.
     parser.add_argument("--image-topic", default="/main_camera/image_raw")
     parser.add_argument("--output-topic", default="/solar")
     parser.add_argument(

@@ -18,6 +18,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 COLOR_TABLE = {
+    # Цвет индикатора сразу связан с состоянием, которое потом ждут в отчёте.
     "yellow": {
         "state": "normal",
         "rgba": "1.0 0.85 0.0 1.0",
@@ -61,12 +62,14 @@ def fmt(value: float) -> str:
 
 
 def configure_output_encoding() -> None:
+    # В VM встречалась latin-1/ANSI кодировка, поэтому явно просим UTF-8.
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8", errors="replace")
 
 
 def rotate(dx: float, dy: float, yaw: float) -> tuple[float, float]:
+    # Переводим локальное смещение объекта панели в координаты мира.
     cos_yaw = math.cos(yaw)
     sin_yaw = math.sin(yaw)
     return dx * cos_yaw - dy * sin_yaw, dx * sin_yaw + dy * cos_yaw
@@ -104,6 +107,7 @@ def generate_positions(
     center = args.map_span / 2.0
 
     anchors = [
+        # Пять опорных точек дают стабильную расстановку: четыре угла и центр.
         (low, low),
         (low, high),
         (high, low),
@@ -116,6 +120,7 @@ def generate_positions(
         for _ in range(500):
             candidates: list[tuple[float, float]] = []
             for anchor_x, anchor_y in anchors[: args.panels]:
+                # Небольшой jitter делает мир разным, но не ломает безопасные зазоры.
                 jitter_x = rng.uniform(-args.position_jitter, args.position_jitter)
                 jitter_y = rng.uniform(-args.position_jitter, args.position_jitter)
                 candidate = (
@@ -167,6 +172,7 @@ def make_panels(args: argparse.Namespace, rng: random.Random) -> list[Panel]:
         )
         indicator_color = rng.choice(colors)
 
+        # Индикатор ставим сбоку от панели и не дальше 0.5 м от её края по условию.
         indicator_side = -1.0 if x > args.x_offset + args.map_span / 2.0 else 1.0
         indicator_dx, indicator_dy = rotate(
             indicator_side * args.indicator_offset, 0.0, yaw
@@ -206,6 +212,7 @@ def make_panels(args: argparse.Namespace, rng: random.Random) -> list[Panel]:
             world_dx, world_dy = rotate(local_x, local_y, yaw)
             contamination_yaw = yaw
             if args.random_contamination_yaw:
+                # По умолчанию листья лежат вдоль панели; флаг добавляет случайный угол.
                 contamination_yaw += rng.uniform(-0.8, 0.8)
             contaminations.append(
                 Contamination(
@@ -238,6 +245,7 @@ def box_model(
     rgba: str,
     collide: bool = True,
 ) -> str:
+    # Простейший SDF box подходит для индикаторов и загрязнений: быстро и надёжно.
     collision = ""
     if collide:
         collision = f"""
@@ -273,6 +281,7 @@ def render_task_models(panels: list[Panel], args: argparse.Namespace) -> str:
     chunks = ["\n    <!-- Generated solar farm inspection objects. -->"]
 
     for panel in panels:
+        # Панель берём отдельной Gazebo-моделью, чтобы не дублировать mesh в world-файле.
         chunks.append(
             f"""
     <include>
@@ -283,6 +292,7 @@ def render_task_models(panels: list[Panel], args: argparse.Namespace) -> str:
         )
 
         color = COLOR_TABLE[panel.indicator_color]
+        # Цветной кубик служит машинно-читаемым индикатором состояния панели.
         chunks.append(
             box_model(
                 name=f"solar_panel_{panel.index}_indicator_{panel.indicator_color}",
@@ -298,6 +308,7 @@ def render_task_models(panels: list[Panel], args: argparse.Namespace) -> str:
         for contamination_index, contamination in enumerate(
             panel.contaminations, start=1
         ):
+            # Зелёные прямоугольники имитируют загрязнения, которые должна найти YOLO.
             chunks.append(
                 box_model(
                     name=f"solar_panel_{panel.index}_contamination_{contamination_index}",
@@ -318,6 +329,7 @@ def render_task_models(panels: list[Panel], args: argparse.Namespace) -> str:
 
 
 def render_standalone_world(task_models: str) -> str:
+    # Standalone-режим нужен для быстрой проверки без Clover world.
     return f"""<?xml version=\"1.0\" ?>
 <sdf version=\"1.6\">
   <world name=\"solar_farm_inspection\">
@@ -346,6 +358,7 @@ def inject_into_base_world(base_world: Path, task_models: str) -> str:
 def write_truth(
     path: Path, panels: list[Panel], args: argparse.Namespace, seed: int
 ) -> None:
+    # Этот JSON нужен только для отладки и датасета; финальная миссия его не читает.
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "seed": seed,
@@ -369,6 +382,7 @@ def write_truth(
 def parse_args() -> argparse.Namespace:
     project_root = Path(__file__).resolve().parents[1]
 
+    # Все размеры вынесены в аргументы, чтобы быстро подстроиться под другой ArUco world.
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--base-world",
@@ -425,6 +439,7 @@ def main() -> None:
         raise SystemExit("--min-contaminations must be <= --max-contaminations")
 
     seed = args.seed if args.seed is not None else time.time_ns()
+    # seed печатается ниже, чтобы любой сгенерированный мир можно было повторить.
     rng = random.Random(seed)
     panels = make_panels(args, rng)
     task_models = render_task_models(panels, args)

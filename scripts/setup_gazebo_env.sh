@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 prepend_path() {
+  # Добавляем путь в начало переменной, но не дублируем его при повторном source.
   local var_name="$1"
   local new_path="$2"
   local current_value="${!var_name:-}"
@@ -23,6 +24,7 @@ prepend_path() {
 prepend_path GAZEBO_MODEL_PATH "$PROJECT_ROOT/models"
 
 add_parent_for_model() {
+  # Ищем родительский каталог модели, потому что Gazebo принимает именно parent path.
   local model_name="$1"
   local root
   local config_path
@@ -36,6 +38,7 @@ add_parent_for_model() {
     fi
   done
 
+  # Эти места покрывают стандартную Clover VM и локальные копии basic_worlds.
   for root in \
     "$HOME/catkin_ws" \
     "$HOME/scripts" \
@@ -59,6 +62,7 @@ add_parent_for_model() {
 
 CLOVER_SIMULATION_PATH=""
 if command -v rospack >/dev/null 2>&1; then
+  # Если ROS окружение уже активировано, rospack даст самый точный путь.
   CLOVER_SIMULATION_PATH="$(rospack find clover_simulation 2>/dev/null || true)"
 fi
 
@@ -76,12 +80,14 @@ done
 
 missing_models=()
 for model_name in parquet_plane aruco_cmit_txt; do
+  # Эти модели нужны стандартному Clover ArUco world.
   if ! add_parent_for_model "$model_name"; then
     missing_models+=("$model_name")
   fi
 done
 
 if [[ "${1:-}" != "--quiet" ]]; then
+  # В обычном режиме печатаем итоговый GAZEBO_MODEL_PATH для диагностики.
   echo "GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH"
   if (( ${#missing_models[@]} > 0 )); then
     echo "Warning: missing Gazebo models: ${missing_models[*]}" >&2

@@ -2,13 +2,10 @@
 
 ## Demo
 
-https://github.com/user-attachments/assets/stable_gazebo_920.mp4
+- Watch: https://rutube.ru/video/private/9a565140615dd2a88e00a43022babae3/?p=D9bHZGmMB7lim2hGRaDhrQ
+- Download: https://drive.google.com/file/d/1Ud2coed4hlWKt3O1LneeI_CeDVL_ZYq8/view?usp=sharing
 
-If the link is not rendered after uploading to GitHub, the video is also stored in the repository root:
-
-```text
-stable_gazebo_920.mp4
-```
+The video is stored externally because GitHub rejects files larger than 100 MB without Git LFS.
 
 ROS/Gazebo solution for the solar farm inspection qualification task: Gazebo world generation, autonomous Clover flight, YOLO-based panel inspection, `/solar` image publication, LED indication, and report generation.
 
@@ -38,7 +35,7 @@ scripts/use_solar_world.sh     installs generated world as Clover world
 scripts/install_gazebo_models.sh installs solar_panel into Gazebo model path
 weights/solar_yolov8n_best.pt  trained YOLOv8n weights
 worlds/generated_solar.world   generated world
-stable_gazebo_920.mp4          demo video
+README.md                      Russian instructions
 ```
 
 ## Requirements
@@ -302,11 +299,7 @@ runs/detect/solar_yolov8n/weights/best.pt
 
 ## Demo Video
 
-The repository root contains:
-
-```text
-stable_gazebo_920.mp4
-```
+The demo video is available through the links at the top of this README.
 
 The competition video should show Gazebo, the mission terminal, `/solar`, and `reports/solar_report.txt`.
 

@@ -2,13 +2,8 @@
 
 ## Демонстрация
 
-https://github.com/user-attachments/assets/stable_gazebo_920.mp4
-
-Если ссылка не отображается после загрузки на GitHub, видео также лежит в корне репозитория:
-
-```text
-stable_gazebo_920.mp4
-```
+- Просмотр: https://rutube.ru/video/private/9a565140615dd2a88e00a43022babae3/?p=D9bHZGmMB7lim2hGRaDhrQ
+- Скачать видео: https://drive.google.com/file/d/1Ud2coed4hlWKt3O1LneeI_CeDVL_ZYq8/view?usp=sharing
 
 Решение для отборочного этапа соревнования `Инспекция солнечной фермы`: генерация мира Gazebo с солнечными панелями, автономный облёт на Clover, распознавание состояния панелей через YOLO, публикация результата в `/solar` и автоматический отчёт.
 
@@ -38,7 +33,7 @@ scripts/use_solar_world.sh     подмена Clover world на сгенерир
 scripts/install_gazebo_models.sh установка модели solar_panel в Gazebo
 weights/solar_yolov8n_best.pt  обученная YOLOv8n-модель
 worlds/generated_solar.world   сгенерированный мир
-stable_gazebo_920.mp4          демонстрационное видео
+README.en.md                   английская версия инструкции
 ```
 
 ## Требования
@@ -316,11 +311,7 @@ runs/detect/solar_yolov8n/weights/best.pt
 
 ## Демонстрационное Видео
 
-В корне проекта находится видео:
-
-```text
-stable_gazebo_920.mp4
-```
+Демонстрационное видео доступно по ссылкам в начале README.
 
 Для зачётного видео по регламенту желательно показать одновременно:
 

@@ -9,6 +9,7 @@ from pathlib import Path
 
 def parse_args() -> argparse.Namespace:
     project_root = Path(__file__).resolve().parents[1]
+    # Roboflow YOLOv8 archive после распаковки ожидается именно в этом каталоге.
     default_data = project_root / "dataset" / "lm" / "gazeboSolars.v1-gazebosolars.yolov8" / "data.yaml"
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -30,9 +31,11 @@ def main() -> None:
     args = parse_args()
 
     if not args.data.exists():
+        # Рано падаем с понятной ошибкой, если датасет не распакован.
         raise SystemExit(f"Dataset YAML not found: {args.data}")
 
     try:
+        # Импорт здесь делает --help рабочим даже без установленного ultralytics.
         from ultralytics import YOLO
     except ModuleNotFoundError as exc:
         raise SystemExit(
@@ -43,6 +46,7 @@ def main() -> None:
         ) from exc
 
     model = YOLO(args.model)
+    # cache=False экономит диск в Clover VM; plots=True сохраняет графики обучения.
     model.train(
         data=str(args.data),
         imgsz=args.imgsz,

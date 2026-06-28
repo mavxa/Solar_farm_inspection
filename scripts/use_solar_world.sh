@@ -9,6 +9,7 @@ WORLD_NAME="${2:-clover_aruco.world}"
 GENERATED_WORLD="$PROJECT_ROOT/worlds/generated_solar.world"
 
 find_clover_simulation() {
+  # Сначала пробуем ROS-способ: он надёжнее, если catkin workspace уже sourced.
   if command -v rospack >/dev/null 2>&1; then
     local rospack_path
     rospack_path="$(rospack find clover_simulation 2>/dev/null || true)"
@@ -18,6 +19,7 @@ find_clover_simulation() {
     fi
   fi
 
+  # Fallback-пути покрывают типичную Clover VM без настроенного окружения ROS.
   for candidate in \
     "$HOME/catkin_ws/src/clover/clover_simulation" \
     "$HOME/catkin_ws/install/share/clover_simulation"; do
@@ -60,6 +62,7 @@ BACKUP_WORLD="$TARGET_WORLD.before_solar.bak"
 
 case "$ACTION" in
   install)
+    # Перед заменой мира обязательно оставляем backup оригинального Clover world.
     if [[ ! -f "$GENERATED_WORLD" ]]; then
       echo "Generated world not found: $GENERATED_WORLD" >&2
       echo "Run scripts/generate_from_clover_world.sh first." >&2
@@ -79,6 +82,7 @@ case "$ACTION" in
     echo "Installed solar world: $TARGET_WORLD"
     ;;
   restore)
+    # Возврат нужен, чтобы быстро откатить VM к стандартному clover_aruco.world.
     if [[ ! -f "$BACKUP_WORLD" ]]; then
       echo "Backup not found: $BACKUP_WORLD" >&2
       exit 1
@@ -87,6 +91,7 @@ case "$ACTION" in
     echo "Restored original world: $TARGET_WORLD"
     ;;
   status)
+    # status ничего не меняет, только показывает активный world и наличие backup.
     echo "Clover simulation: $CLOVER_SIMULATION_PATH"
     echo "Target world:      $TARGET_WORLD"
     echo "Backup world:      $BACKUP_WORLD"
