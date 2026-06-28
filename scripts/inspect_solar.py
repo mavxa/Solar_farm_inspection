@@ -273,6 +273,7 @@ class SolarInspector:
                 continue
 
             detections = self.detect(frame)
+            frame_h, frame_w = frame.shape[:2]
             annotated = self.annotate(frame, detections)
             self.publish_annotated(annotated)
 
@@ -286,7 +287,9 @@ class SolarInspector:
 
             for det in detections:
                 if det.class_name in STATE_BY_INDICATOR:
-                    indicator_scores[det.class_name] += det.confidence
+                    indicator_scores[det.class_name] += det.confidence * center_weight(
+                        det.xyxy, frame_w, frame_h
+                    )
 
             if indicator_scores and not led_state_set:
                 best_indicator = max(indicator_scores, key=indicator_scores.get)
@@ -400,6 +403,17 @@ def parse_waypoints(raw: str) -> list[tuple[float, float]]:
     if not waypoints:
         raise ValueError("No waypoints provided")
     return waypoints
+
+
+def center_weight(xyxy: tuple[int, int, int, int], frame_w: int, frame_h: int) -> float:
+    x1, y1, x2, y2 = xyxy
+    box_cx = (x1 + x2) / 2.0
+    box_cy = (y1 + y2) / 2.0
+    frame_cx = frame_w / 2.0
+    frame_cy = frame_h / 2.0
+    max_distance = math.hypot(frame_cx, frame_cy)
+    distance = math.hypot(box_cx - frame_cx, box_cy - frame_cy)
+    return max(0.05, 1.0 - distance / max_distance)
 
 
 def write_report(path: Path, results: list[InspectionResult]) -> None:
